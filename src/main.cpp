@@ -23,14 +23,14 @@ Telegram telegram;
 bool isBirdDetectAlerted = false;
 
 void setup() {
-  Serial.begin(115200); // Starts the serial communication
+  Serial.begin(115200); 
   wifi.connectToWifi();
   config.loadConfig();
   String allConfigs = config.allConfigs();
   telegram.sendHealth("Device started! 🚀 -> " + allConfigs);
   
-  pinMode(trigPin, OUTPUT); // Sets the trigPin as an Output
-  pinMode(echoPin, INPUT); // Sets the echoPin as an Input
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT); 
   servo.attach(servoPin);
 }
 
@@ -45,7 +45,6 @@ void loop() {
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
   
-  // Reads the echoPin, returns the sound wave travel time in microseconds
   duration = pulseIn(echoPin, HIGH);
   
   // Calculate the distance
