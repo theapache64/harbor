@@ -71,4 +71,9 @@ public:
       }
       return str;
     }
+
+    void refreshConfigs(){
+        configCache.clear();
+        loadConfig();
+    }
 };

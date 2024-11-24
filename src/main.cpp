@@ -37,10 +37,8 @@ void setup() {
 long lastHeartbeatSentAt = 0;
 
 void loop() {
-  // Clears the trigPin
   digitalWrite(trigPin, LOW);
   delayMicroseconds(2);
-  // Sets the trigPin on HIGH state for 10 micro seconds
   digitalWrite(trigPin, HIGH);
   delayMicroseconds(10);
   digitalWrite(trigPin, LOW);
@@ -53,7 +51,7 @@ void loop() {
   if(distanceCm < config.getConfig("distance_threshold_in_cm", "10").toInt()) {
     servo.write(config.getConfig("servo_on_bird", "90").toInt());
     if(isBirdDetectAlerted == false) {
-      telegram.sendAlert("Bird detected! 🐦");
+      telegram.sendAlert("Bird detected! 🐦" +  String(distanceCm) + "cm");
       isBirdDetectAlerted = true;
     }
   } else {
@@ -66,8 +64,9 @@ void loop() {
   Serial.println(distanceCm);
 
   if(millis() - lastHeartbeatSentAt > config.getConfig("heartbeat_interval_in_sec", "60").toInt() * 1000.0) {
-    telegram.sendHealth("Device is running! ❤️");
+    telegram.sendHealth("Device is running! ❤️ - " + String(distanceCm) + "cm");
     lastHeartbeatSentAt = millis();
+    config.refreshConfigs();
   }
   
   delay(config.getConfig("main_delay_in_ms", "1000").toInt());
