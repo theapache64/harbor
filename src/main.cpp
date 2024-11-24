@@ -47,15 +47,20 @@ void loop() {
   
   // Calculate the distance
   distanceCm = duration * SOUND_VELOCITY/2;
+  bool isServoEnabled = config.getConfig("servo_enabled", "FALSE") == "TRUE";
 
   if(distanceCm < config.getConfig("distance_threshold_in_cm", "10").toInt()) {
-    servo.write(config.getConfig("servo_on_bird", "90").toInt());
+    if(isServoEnabled) {
+      servo.write(config.getConfig("servo_on_bird", "90").toInt());
+    }
     if(isBirdDetectAlerted == false) {
       telegram.sendAlert("Bird detected! 🐦" +  String(distanceCm) + "cm");
       isBirdDetectAlerted = true;
     }
   } else {
-    servo.write(config.getConfig("servo_on_watch", "0").toInt());
+    if(isServoEnabled) {
+      servo.write(config.getConfig("servo_on_watch", "0").toInt());
+    }
     isBirdDetectAlerted = false;
   }
   

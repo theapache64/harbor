@@ -1,18 +1,21 @@
+#include <Keys.h>
+
 #include <map>
 #include <string>
-#include <Keys.h>
+
 #include "NetworkClient.h"
 
 class Telegram {
-private:
-    std::map<String, String> configCache;
-    NetworkClient client;
-
+   private:
     void send(String message, String token, String groupChatId) {
         // check if config cache is empty
         HTTPClient telegramSendMsgRequest;
+        NetworkClient client;
+        String url = "https://api.telegram.org/bot" + token +
+                     "/sendMessage?chat_id=" + groupChatId + "&text=" + message;
+        Serial.println("URL: '" + url + "'");
 
-        if (telegramSendMsgRequest.begin(*client.httpClient, "https://api.telegram.org/bot" + token + "/sendMessage?chat_id="+ groupChatId +"&text=" + message)) {  // HTTPS
+        if (telegramSendMsgRequest.begin(*client.httpClient, url)) {  // HTTPS
             Serial.println("[HTTPS] GETing... " + message);
             // start connection and send HTTP header
             int responseCode = telegramSendMsgRequest.GET();
@@ -22,15 +25,17 @@ private:
                 // handled
                 Serial.println("[HTTPS] GET... code: " + String(responseCode));
             } else {
-                Serial.println("[HTTPS] GET... failed, error: " + String(responseCode));
+                Serial.println("[HTTPS] GET... failed, error: " +
+                               String(responseCode));
             }
 
-            telegramSendMsgRequest.end();
-        }else {
+        } else {
             Serial.println("[HTTPS] Unable to connect");
         }
+        telegramSendMsgRequest.end();
     }
-public:
+
+   public:
     void sendAlert(String message) {
         send(message, ALERT_BOT_TOKEN, ALERT_GROUP_CHAT_ID);
     }
