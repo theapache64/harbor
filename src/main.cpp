@@ -47,14 +47,17 @@ void loop() {
   
   // Calculate the distance
   distanceCm = duration * SOUND_VELOCITY/2;
-  bool isServoEnabled = config.getConfig("servo_enabled", "FALSE") == "TRUE";
+  bool isServoEnabled = config.getConfig("is_servo_enabled", "FALSE") == "TRUE";
+  bool isTelegramEnabled = config.getConfig("is_telegram_enabled", "FALSE") == "TRUE";
 
   if(distanceCm < config.getConfig("distance_threshold_in_cm", "10").toInt()) {
     if(isServoEnabled) {
       servo.write(config.getConfig("servo_on_bird", "90").toInt());
     }
     if(isBirdDetectAlerted == false) {
-      telegram.sendAlert("Bird detected! 🐦" +  String(distanceCm) + "cm");
+      if(isTelegramEnabled){
+          telegram.sendAlert("Bird detected! 🐦" +  String(distanceCm) + "cm");
+      }
       isBirdDetectAlerted = true;
     }
   } else {
@@ -69,7 +72,10 @@ void loop() {
   Serial.println(distanceCm);
 
   if(millis() - lastHeartbeatSentAt > config.getConfig("heartbeat_interval_in_sec", "60").toInt() * 1000.0) {
-    telegram.sendHealth("Device is running! ❤️ - " + String(distanceCm) + "cm");
+    if(isTelegramEnabled){
+      String allConfigs = config.allConfigs();
+      telegram.sendHealth("Device is running! ❤️ - " + String(distanceCm) + "cm; "+ allConfigs);
+    }
     lastHeartbeatSentAt = millis();
     config.refreshConfigs();
   }
