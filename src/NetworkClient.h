@@ -11,7 +11,6 @@ class NetworkClient {
 public:
   NetworkClient();
   std::unique_ptr<BearSSL::WiFiClientSecure> httpClient;
-  
 };
 
 #endif // NETWORKCLIENT_H

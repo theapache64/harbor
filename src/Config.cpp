@@ -1,13 +1,13 @@
 #include <ESP8266WiFi.h>
-
 #include <map>
 #include <string>
-
 #include "NetworkClient.h"
 
 class Config {
    private:
     std::map<String, String> configCache;
+    const String sheetId = "1OzhdDoPW-slnVct42AsFLe2zNJJrFReHDz5Gv6hccsA";
+    const String sheetName = "config";
 
    public:
     String getConfig(String key, String defval) {
@@ -28,10 +28,7 @@ class Config {
         Serial.println("Loading configs...");
         HTTPClient request;
         NetworkClient client;
-        if (request.begin(*client.httpClient,
-                          "https://docs.google.com/spreadsheets/d/"
-                          "1OzhdDoPW-slnVct42AsFLe2zNJJrFReHDz5Gv6hccsA/gviz/"
-                          "tq?tqx=out:csv&sheet=config")) {
+        if (request.begin(*client.httpClient,"https://docs.google.com/spreadsheets/d/"+ sheetId + "/gviz/tq?tqx=out:csv&sheet=" + sheetName)) {
             int responseCode = request.GET();
             Serial.println("Response code: " + String(responseCode));
             if (responseCode > 0) {
